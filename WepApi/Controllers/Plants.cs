@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WepApi.Models;
 
 namespace WepApi.Controllers
 {
@@ -22,7 +23,7 @@ namespace WepApi.Controllers
 
         [HttpPost]
 
-        public string CreatePlant()
+        public string CreatePlant([FromForm]Plant plant)
         {
             return $"Creating a plant";
         }
