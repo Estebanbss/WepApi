@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WepApi.Filters;
+using WepApi.Filters.ActionFilters;
+using WepApi.Filters.ExceptionFilters;
 using WepApi.Models;
+using WepApi.Models.Repositories;
 
 namespace WepApi.Controllers
 {
@@ -7,37 +11,57 @@ namespace WepApi.Controllers
     [Route("api/[controller]")]
     public class Plants : ControllerBase
     {
+     
+
         [HttpGet]
 
-        public string GetPlants()
+        public IActionResult GetPlants()
         {
-            return "Reading all the plants";
+            return Ok(PlantRepository.GetPlants());
         }
 
         [HttpGet("{id}")]
-
-        public string GetPlantById(int id)
+        [Plant_ValidatePlantIdFilter]
+        public IActionResult GetPlantById(int id)
         {
-            return $"Reading plant {id}";
+
+
+            return Ok(PlantRepository.GetPlantByID(id));
         }
 
         [HttpPost]
-
-        public string CreatePlant([FromForm]Plant plant)
+        [Plant_ValidatePlantExistingFilter]
+        public IActionResult CreatePlant([FromBody] Plant plant)
         {
-            return $"Creating a plant";
+
+            PlantRepository.AddPlant(plant);
+
+            return CreatedAtAction(nameof(GetPlantById),
+                new {id= plant.PlantId},
+                plant);
         }
 
         [HttpPut("{id}")]
-        public string UpdatePlant(int id)
+        [Plant_ValidatePlantIdFilter]
+        [Plant_ValidateUpdatePlantFilter]
+        [Plant_HandleUpdtaeExceptionsFilter]
+        public IActionResult UpdatePlant(int id, Plant plant)
         {
-            return $"Updating plant: {id}";
+
+            PlantRepository.UpdatePlant(plant);
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public string DeletePlant(int id)
+        [Plant_ValidatePlantIdFilter]
+        public IActionResult DeletePlant(int id)
         {
-            return $"Delete plant: {id}";
+            var plant = PlantRepository.GetPlantByID(id);
+
+            PlantRepository.DeletePlant(id);
+
+            return Ok($"Delete plant: {id}");
         }
 
     }

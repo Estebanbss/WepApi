@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WepApi.Models.Validations;
 
 namespace WepApi.Models
 {
@@ -13,7 +14,8 @@ namespace WepApi.Models
 
         [Required]
         public string? Name { get; set; }
-   
+
+        [Plant_EnsureCorrectHighAtrribute]
         public int? Height { get; set; }
         public double? Price { get; set; }
 
